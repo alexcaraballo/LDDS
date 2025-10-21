@@ -31,6 +31,7 @@ LDDS/
 
 * **.templates/** — Service templates (minimal container definitions)
 * **scripts/start.sh** — Script to launch the generated Docker Compose stack
+* **stacks/** - Template of applications/projects to load into Portainer stacks and begin development quickly.
 * **deploy.sh** — Interactive deployment script
 * **.env.example** — Example environment variables for easy configuration
 
