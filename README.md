@@ -24,5 +24,3 @@ LDDS/
 chmod +x deploy.sh scripts/start.sh
 ./deploy.sh
 ```
-
-Selecciona los servicios y luego elige “Generar compose” y “start”.
