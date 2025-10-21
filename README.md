@@ -17,6 +17,11 @@ LDDS/
  │   ├── portainer/service.yml
  │   ├── n8n/service.yml
  │   └── postgres/service.yml
+ ├── stacks/
+ │   └── sample-stack
+ │       ├──html
+ │       │  └── insex.html
+ │       └── docker-compose.yml
  ├── scripts/
  │   └── start.sh
  ├── deploy.sh
