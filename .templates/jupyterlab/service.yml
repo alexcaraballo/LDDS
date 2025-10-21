@@ -1,0 +1,12 @@
+jupyterlab:
+  image: jupyter/base-notebook:latest
+  container_name: ldds-jupyterlab
+  restart: unless-stopped
+  environment:
+    - JUPYTER_TOKEN=${JUPYTER_TOKEN:-jupyter_password}
+    - NB_UID=1000
+    - NB_GID=100
+  ports:
+    - "8888:8888"
+  volumes:
+    - jupyter_data:/home/jovyan/work

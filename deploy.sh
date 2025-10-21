@@ -30,13 +30,15 @@ function select_services() {
       "portainer" "Gestión web de contenedores" OFF
       "postgres"  "Base de datos PostgreSQL" OFF
       "n8n"       "Automatización de flujos" OFF
+      "netdata"   "Monitoreo de rendimiento" OFF
+      "jupyterlab" "Entorno JupyterLab" OFF
+      "code-server" "Editor de código en la nube" OFF
     )
     local choices
     choices=$(whiptail --title "LDDS - Selección de Servicios" \
       --checklist "Usa espacio para marcar/desmarcar, Enter para continuar:" 20 70 10 \
       "${options[@]}" 3>&2 2>&1 1>&3)
 
-    # Convierte resultado a array
     IFS=" " read -r -a SELECTED_SERVICES <<<"${choices//\"/}"
   else
     echo "whiptail no encontrado, usando selección manual."
@@ -44,12 +46,19 @@ function select_services() {
     echo "1) portainer"
     echo "2) postgres"
     echo "3) n8n"
+    echo "4) netdata"
+    echo "5) jupyterlab"
+    echo "6) code-server"
     read -rp "Servicios: " choices
     for num in $choices; do
       case $num in
         1) SELECTED_SERVICES+=("portainer") ;;
         2) SELECTED_SERVICES+=("postgres") ;;
         3) SELECTED_SERVICES+=("n8n") ;;
+        4) SELECTED_SERVICES+=("netdata") ;;
+        5) SELECTED_SERVICES+=("jupyterlab") ;;
+        6) SELECTED_SERVICES+=("code-server") ;;
+        *) echo "Opción inválida: $num" ;;
       esac
     done
   fi
@@ -70,19 +79,36 @@ function generate_compose() {
   echo "version: '3.8'" >"$GENERATED_FILE"
   echo "services:" >>"$GENERATED_FILE"
 
+  # Guardamos los volúmenes que necesitamos
+  declare -A volumes_needed
+
   for svc in "${SELECTED_SERVICES[@]}"; do
     template="$TEMPLATE_DIR/$svc/service.yml"
     if [[ -f "$template" ]]; then
       echo "  # $svc" >>"$GENERATED_FILE"
       sed 's/^/  /' "$template" >>"$GENERATED_FILE"
+
+      # Marcar volúmenes necesarios según servicio
+      case $svc in
+        portainer) volumes_needed[portainer_data]=1 ;;
+        postgres)  volumes_needed[postgres_data]=1 ;;
+        n8n)       volumes_needed[n8n_data]=1 ;;
+        netdata)   volumes_needed[netdata_config]=1; volumes_needed[netdata_lib]=1; volumes_needed[netdata_cache]=1 ;;
+        jupyterlab) volumes_needed[jupyter_data]=1 ;;
+        code-server) volumes_needed[code_server_data]=1 ;;
+      esac
     fi
   done
 
-  echo -e "\nvolumes:" >>"$GENERATED_FILE"
-  echo "  portainer_data:" >>"$GENERATED_FILE"
-  echo "  postgres_data:" >>"$GENERATED_FILE"
-  echo "  n8n_data:" >>"$GENERATED_FILE"
+  # Generar la sección de volúmenes según lo marcado
+  if [[ ${#volumes_needed[@]} -gt 0 ]]; then
+    echo -e "\nvolumes:" >>"$GENERATED_FILE"
+    for vol in "${!volumes_needed[@]}"; do
+      echo "  $vol:" >>"$GENERATED_FILE"
+    done
+  fi
 }
+
 
 function ask_start() {
   echo -e "${BLUE}Paso 3:${RESET} ¿Deseas levantar los servicios ahora?"

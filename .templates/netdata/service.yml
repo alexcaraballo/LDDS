@@ -1,0 +1,20 @@
+netdata:
+  image: netdata/netdata:latest
+  container_name: ldds-netdata
+  restart: unless-stopped
+  ports:
+    - "19999:19999"
+  cap_add:
+    - SYS_PTRACE
+    - NET_ADMIN
+  security_opt:
+    - apparmor:unconfined
+  volumes:
+    - netdata_config:/etc/netdata
+    - netdata_lib:/var/lib/netdata
+    - netdata_cache:/var/cache/netdata
+    - /etc/passwd:/host/etc/passwd:ro
+    - /etc/group:/host/etc/group:ro
+    - /proc:/host/proc:ro
+    - /sys:/host/sys:ro
+    - /etc/os-release:/host/etc/os-release:ro

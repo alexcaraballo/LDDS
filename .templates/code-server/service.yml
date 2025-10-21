@@ -1,0 +1,10 @@
+code-server:
+  image: codercom/code-server:latest
+  container_name: ldds-code-server
+  restart: unless-stopped
+  environment:
+    - PASSWORD=${CODE_SERVER_PASSWORD:-code_password}
+  ports:
+    - "8443:8443"
+  volumes:
+    - code_server_data:/home/coder/project
