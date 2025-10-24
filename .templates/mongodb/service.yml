@@ -1,0 +1,32 @@
+mongo:
+    image: mongo:7.0
+    container_name: ldds-mongo
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-ldds}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-lddspass}
+      - MONGO_REPLICA_MODE=${MONGO_REPLICA_MODE:-false}
+    command:
+      - sh
+      - -c
+      - |
+        if [ "$MONGO_REPLICA_MODE" = "true" ]; then
+          echo "🚀 Starting MongoDB in REPLICA mode..."
+          mongod --replSet lddsReplicaSet --bind_ip_all
+        else
+          echo "🔹 Starting MongoDB in STANDALONE mode..."
+          mongod --bind_ip_all
+        fi
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data:
+    name: ldds_mongo_data

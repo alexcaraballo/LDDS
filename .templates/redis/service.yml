@@ -1,0 +1,42 @@
+redis:
+    image: redis:7.4-alpine
+    container_name: ldds-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-lddsredispass}
+      - REDIS_CLUSTER_MODE=${REDIS_CLUSTER_MODE:-false}
+    command:
+      - sh
+      - -c
+      - |
+        if [ "$REDIS_CLUSTER_MODE" = "true" ]; then
+          echo "🚀 Starting Redis in CLUSTER mode..."
+          redis-server \
+            --requirepass "$REDIS_PASSWORD" \
+            --cluster-enabled yes \
+            --cluster-config-file nodes.conf \
+            --cluster-node-timeout 5000 \
+            --appendonly yes \
+            --save 20 1 \
+            --loglevel warning
+        else
+          echo "🔹 Starting Redis in STANDALONE mode..."
+          redis-server \
+            --requirepass "$REDIS_PASSWORD" \
+            --save 20 1 \
+            --appendonly yes \
+            --loglevel warning
+        fi
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-lddsredispass}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
+    name: ldds_redis_data
