@@ -26,7 +26,3 @@ mongo:
       interval: 10s
       timeout: 5s
       retries: 5
-
-volumes:
-  mongo_data:
-    name: ldds_mongo_data

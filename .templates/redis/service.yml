@@ -36,7 +36,3 @@ redis:
       retries: 5
     volumes:
       - redis_data:/data
-
-volumes:
-  redis_data:
-    name: ldds_redis_data
