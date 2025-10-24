@@ -130,6 +130,8 @@ function generate_compose() {
         netdata)   volumes_needed[netdata_config]=1; volumes_needed[netdata_lib]=1; volumes_needed[netdata_cache]=1 ;;
         jupyterlab) volumes_needed[jupyter_data]=1 ;;
         code-server) volumes_needed[code_server_data]=1 ;;
+        mongodb)   volumes_needed[mongo_data]=1 ;;
+        redis)     volumes_needed[redis_data]=1 ;;
       esac
     fi
   done
