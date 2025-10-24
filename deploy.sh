@@ -152,7 +152,7 @@ function ask_start() {
   case "$opt" in
     s|S|y|Y)
       echo "🚀 Starting stack..."
-      bash "$SCRIPTS_DIR/start.sh"
+      bash "$SCRIPTS_DIR/start.sh" "${SELECTED_SERVICES[@]}"
       ;;
     *)
       echo -e "\nYou can start them later with:"
