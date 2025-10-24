@@ -59,6 +59,8 @@ function select_services() {
       "netdata"   "Performance monitoring" OFF
       "jupyterlab" "JupyterLab environment" OFF
       "code-server" "Cloud code editor" OFF
+      "mongodb" "MongoDB database" OFF
+      "redis" "Redis in-memory data store" OFF
     )
     local choices
     choices=$(whiptail --title "LDDS - Service Selection" \
@@ -75,6 +77,8 @@ function select_services() {
     echo "4) netdata"
     echo "5) jupyterlab"
     echo "6) code-server"
+    echo "7) mongodb"
+    echo "8) redis"
     read -rp "Services: " choices
     for num in $choices; do
       case $num in
@@ -84,6 +88,8 @@ function select_services() {
         4) SELECTED_SERVICES+=("netdata") ;;
         5) SELECTED_SERVICES+=("jupyterlab") ;;
         6) SELECTED_SERVICES+=("code-server") ;;
+        7) SELECTED_SERVICES+=("mongodb") ;;
+        8) SELECTED_SERVICES+=("redis") ;;
         *) echo "Invalid option: $num" ;;
       esac
     done
