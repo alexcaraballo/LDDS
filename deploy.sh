@@ -110,7 +110,7 @@ function show_progress() {
 
 # Generate docker-compose.yml dynamically
 function generate_compose() {
-  echo "version: '3.8'" >"$GENERATED_FILE"
+  echo "version: '3.9'" >"$GENERATED_FILE"
   echo "services:" >>"$GENERATED_FILE"
 
   # Track volumes required by selected services
